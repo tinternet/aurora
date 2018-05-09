@@ -17,13 +17,13 @@ func syncSymbols() {
 		Error   error
 	}
 
-	var results = make(chan symbolResult, len(markets))
+	var results = make(chan symbolResult)
 	var wg sync.WaitGroup
 	var st = time.Now()
-	var retriesLimit = 5
 
 	var fetch = func(m aurora.Market) {
 		var result symbolResult
+		var retriesLimit = 5
 		for i := 0; i < retriesLimit; i++ {
 			result.Symbols, result.Error = m.Symbols()
 			result.Market = m.ID()
@@ -35,13 +35,10 @@ func syncSymbols() {
 		wg.Done()
 	}
 
-	wg.Add(len(markets))
-
-	go func() {
-		for _, m := range markets {
-			go fetch(m)
-		}
-	}()
+	for _, m := range markets {
+		wg.Add(1)
+		go fetch(m)
+	}
 
 	go func() {
 		wg.Wait()
