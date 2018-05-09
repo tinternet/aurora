@@ -9,7 +9,7 @@ type Processor interface {
 
 	// Start method is executed after market data is synchronized and event subscriptions are done.
 	// Returning error causes panic.
-	Start() error
+	Start(Context) error
 
 	// ProcessSymbolsUpdate is executed when market symbols are updated.
 	ProcessSymbolsUpdate([]Symbol)

@@ -2,44 +2,57 @@ package processing
 
 import (
 	"github.com/bloc4ain/aurora"
+	"github.com/bloc4ain/aurora/db"
 )
 
+// DataKeeper processor stores all trade data into database
 type DataKeeper struct {
-	ctrl aurora.Context
+	db.RethinkDB
+	context aurora.Context
 }
 
 // Init method is called before markets are synched and events are subscribed
 // Returning error causes panic
 func (dk *DataKeeper) Init(c aurora.Context) error {
-	dk.ctrl = c
+	if err := dk.Connect("localhost:28015"); err != nil {
+		return err
+	}
+
 	for _, m := range c.Markets() {
 		if err := c.SyncOrderBook(m, c.Symbols()...); err != nil {
 			return err
 		}
 	}
+
+	dk.context = c
 	return nil
 }
 
 // Start method is called when all data is fetched from all markets and all events are subscribed
 // Returning error causes panic
-func (dk *DataKeeper) Start() error {
+func (dk *DataKeeper) Start(c aurora.Context) error {
 	return nil
 }
 
+// ProcessSymbolsUpdate updates symbols in database
 func (dk *DataKeeper) ProcessSymbolsUpdate(s []aurora.Symbol) {
 
 }
 
-// ProcessOrderBook is called when order book update is available
+// ProcessOrderBook updates order books in database
 func (dk *DataKeeper) ProcessOrderBook(m aurora.MarketID, ob aurora.OrderBook) {
 
 }
 
-// ProcessTicker is called when ticker update is available
+// ProcessTicker updates tickers in database
 func (dk *DataKeeper) ProcessTicker(m aurora.MarketID, t aurora.Ticker) {
 
 }
 
-func (dk *DataKeeper) Flush() {
+// Flush does nothing
+func (dk *DataKeeper) Flush() {}
 
+// NewDataKeeper returns new data keeper processor instance
+func NewDataKeeper() aurora.Processor {
+	return &DataKeeper{}
 }

@@ -73,7 +73,17 @@ func initServices() {
 
 	// Initialize processors
 	for _, s := range services {
-		s.proc.Init(s.ctx)
+		if err := s.proc.Init(s.ctx); err != nil {
+			panic(err)
+		}
+		s.ctx.initialized = true
+	}
+
+	// Start processors
+	for _, s := range services {
+		if err := s.proc.Start(s.ctx); err != nil {
+			panic(err)
+		}
 		s.ctx.initialized = true
 	}
 }
