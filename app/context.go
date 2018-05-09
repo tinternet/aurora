@@ -24,8 +24,9 @@ func setSymbols(s map[aurora.MarketID][]aurora.Symbol) {
 	marketSymbols.symbolsLock.Unlock()
 }
 
-// Context represents processor control handler
-type context struct{}
+type context struct {
+	initialized bool
+}
 
 func (c *context) Market(m string) aurora.MarketID {
 	if m == "" {
@@ -48,8 +49,7 @@ func (c *context) Markets() []aurora.MarketID {
 func (c *context) Symbols(markets ...aurora.MarketID) []aurora.Symbol {
 	var list = make([]aurora.Symbol, 0)
 	var visited = make(map[string]bool)
-
-	symbols := getSymbols()
+	var symbols = getSymbols()
 
 	if len(markets) == 0 {
 		for m := range symbols {
@@ -80,6 +80,9 @@ func (c *context) Ticker() aurora.TickerSnapshot {
 }
 
 func (c *context) SyncOrderBook(m aurora.MarketID, s ...aurora.Symbol) error {
+	if c.initialized { // foolproof check - subscriptions can be done only during init process
+		return nil
+	}
 	if m == "" {
 		return errors.New("Syncing order book aborted because of empty market id")
 	}

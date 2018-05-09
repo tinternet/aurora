@@ -29,7 +29,7 @@ func (m Market) Symbols() ([]aurora.Symbol, error) {
 
 	go func() {
 		defer wg.Done()
-		res, err := http.Get("https://api.kucoin.com/v1/open/markets")
+		var res, err = http.Get("https://api.kucoin.com/v1/open/markets")
 		if err != nil {
 			err1 = err
 			return
@@ -48,7 +48,7 @@ func (m Market) Symbols() ([]aurora.Symbol, error) {
 
 	go func() {
 		defer wg.Done()
-		res, err := http.Get("https://api.kucoin.com/v1/market/open/coins")
+		var res, err = http.Get("https://api.kucoin.com/v1/market/open/coins")
 		if err != nil {
 			err2 = err
 			return
@@ -79,7 +79,7 @@ func (m Market) Symbols() ([]aurora.Symbol, error) {
 		return nil, err2
 	}
 
-	symbols := make([]aurora.Symbol, 0)
+	var symbols = make([]aurora.Symbol, 0)
 	for _, ba := range baseAssets {
 		for _, qa := range quoteAssets {
 			symbols = append(symbols, aurora.Symbol{BaseAsset: ba, QuoteAsset: qa})

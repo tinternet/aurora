@@ -6,8 +6,8 @@ type OrderBookSnapshot map[MarketID]map[SymbolID]OrderBook
 // TickerSnapshot represents snapshot map of tickers grouped by symbol and market
 type TickerSnapshot map[MarketID]map[SymbolID]Ticker
 
-// Controller wraps market control system functions.
-type Controller interface {
+// Context wraps market control system functions.
+type Context interface {
 	// Market returns MarketID for given string or empty if not found
 	Market(string) MarketID
 

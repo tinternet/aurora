@@ -5,7 +5,7 @@ type Processor interface {
 	// Init method is executed after symbols are synchronized and
 	// before other market data is downloaded and event subscriptions are done.
 	// Returning error causes panic.
-	Init(Controller) error
+	Init(Context) error
 
 	// Start method is executed after market data is synchronized and event subscriptions are done.
 	// Returning error causes panic.

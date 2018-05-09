@@ -5,12 +5,12 @@ import (
 )
 
 type DataKeeper struct {
-	ctrl aurora.Controller
+	ctrl aurora.Context
 }
 
 // Init method is called before markets are synched and events are subscribed
 // Returning error causes panic
-func (dk *DataKeeper) Init(c aurora.Controller) error {
+func (dk *DataKeeper) Init(c aurora.Context) error {
 	dk.ctrl = c
 	for _, m := range c.Markets() {
 		if err := c.SyncOrderBook(m, c.Symbols()...); err != nil {

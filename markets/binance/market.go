@@ -16,13 +16,13 @@ func (m Market) ID() aurora.MarketID {
 
 // Symbols returns currently traded symbols on the market
 func (m Market) Symbols() ([]aurora.Symbol, error) {
-	info, err := binance.GetExchangeInfo()
+	var info, err = binance.GetExchangeInfo()
 
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]aurora.Symbol, 0)
+	var res = make([]aurora.Symbol, 0)
 
 	for _, s := range info.Symbols {
 		res = append(res, aurora.Symbol{

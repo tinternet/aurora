@@ -64,13 +64,16 @@ func syncSymbols() {
 func initServices() {
 	var services = make([]service, len(processors))
 
+	// Create services
 	for i, p := range processors {
 		var c = context{}
 		var s = service{ctx: &c, proc: p}
 		services[i] = s
 	}
 
+	// Initialize processors
 	for _, s := range services {
 		s.proc.Init(s.ctx)
+		s.ctx.initialized = true
 	}
 }

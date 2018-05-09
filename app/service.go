@@ -5,6 +5,6 @@ import (
 )
 
 type service struct {
-	ctx  aurora.Controller
+	ctx  *context
 	proc aurora.Processor
 }

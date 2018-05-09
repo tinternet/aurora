@@ -41,7 +41,7 @@ func (m BinanceMock) ID() aurora.MarketID {
 // Symbols returns currently traded symbols on the market
 func (m BinanceMock) Symbols() ([]aurora.Symbol, error) {
 	var list []aurora.Symbol
-	err := json.Unmarshal(binanceSymbolsJSON, &list)
+	var err = json.Unmarshal(binanceSymbolsJSON, &list)
 	return list, err
 }
 
@@ -57,6 +57,6 @@ func (m KuCoinMock) ID() aurora.MarketID {
 // Symbols returns currently traded symbols on the market
 func (m KuCoinMock) Symbols() ([]aurora.Symbol, error) {
 	var list []aurora.Symbol
-	err := json.Unmarshal(kucoinSymbolsJSON, &list)
+	var err = json.Unmarshal(kucoinSymbolsJSON, &list)
 	return list, err
 }

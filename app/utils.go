@@ -6,7 +6,7 @@ import (
 )
 
 func shortDuration(d time.Duration) string {
-	s := d.String()
+	var s = d.String()
 	if strings.HasSuffix(s, "m0s") {
 		s = s[:len(s)-2]
 	}

@@ -19,7 +19,7 @@ func AddMarket(m aurora.Market) {
 
 // MarketList returns list of all registered markets in the system
 func MarketList() []aurora.Market {
-	list := make([]aurora.Market, 0)
+	var list = make([]aurora.Market, 0)
 	for _, m := range markets {
 		list = append(list, m)
 	}
@@ -39,7 +39,7 @@ func Run(c Config) {
 	syncSymbols()
 	initServices()
 
-	ss := time.NewTicker(c.SymbolSyncInterval)
+	var ss = time.NewTicker(c.SymbolSyncInterval)
 	for {
 		select {
 		case <-ss.C:
