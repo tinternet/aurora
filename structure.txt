@@ -1,0 +1,53 @@
+
+   Markets                                                                                                     Interfaces   
+┏━━━━━━━━━━━┓                                                                                                ┏━━━━━━━━━━━┓
+┃           ┃                                                                                                ┃           ┃
+┃  Binance  ┣━━━┓              Controller               Processors                Storage                ┏━━━┫    Web    ┃
+┃           ┃   ┃ Market API ┏━━━━━━━━━━━━━┓          ┏━━━━━━━━━━━━━┓          ┏━━━━━━━━━━━━━┓           ┃   ┃           ┃
+┗━━━━━━━━━━━┛   ┣━━━━━━━━━━━━┫             ┃          ┃             ┃          ┃             ┃           ┃   ┗━━━━━━━━━━━┛
+                ┃            ┃ API calls   ┃          ┃ Aggregators ┃          ┃ Order books ┃           ┃                
+┏━━━━━━━━━━━┓   ┃            ┃             ┃          ┃             ┃          ┃             ┃           ┃   ┏━━━━━━━━━━━┓
+┃           ┃   ┃ Event Bus  ┃ Event subs  ┃ Data bus ┃ Filters     ┃ Data bus ┃ Tickers     ┃ Data bus  ┃   ┃           ┃
+┃  KuCoin   ┣━━━╋━━━━━━━━━━━━┫             ┣━━━━━━━━━━┫             ┣━━━━━━━━━━┫             ┣━━━━━━━━━━━╋━━━┫ Telegram  ┃
+┃           ┃   ┃            ┃ Ctrl calls  ┃          ┃ Analyzers   ┃          ┃ Symbols     ┃           ┃   ┃           ┃
+┗━━━━━━━━━━━┛   ┃            ┃             ┃          ┃             ┃          ┃             ┃           ┃   ┗━━━━━━━━━━━┛
+                ┃ Ctrl Bus   ┃ Metrics     ┃          ┃ ...         ┃          ┃ Analytics   ┃           ┃                
+┏━━━━━━━━━━━┓   ┣━━━━━━━━━━━━┫             ┃          ┃             ┃          ┃             ┃           ┃   ┏━━━━━━━━━━━┓
+┃           ┃   ┃            ┗━━━━━━┳━━━━━━┛          ┗━━━━━━┳━━━━━━┛          ┗━━━━━━┳━━━━━━┛           ┃   ┃           ┃
+┃  Bittrex  ┣━━━┛                   ┃                        ┃                        ┃                  ┣━━━┫    CLI    ┃
+┃           ┃                       ┗━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━┛   ┃           ┃
+┗━━━━━━━━━━━┛                                             Ctrl Bus                                           ┗━━━━━━━━━━━┛
+
+## Markets
+Markets are integrations with 3rd party trade markets APIs providing functions for fetching trade markets data.
+They also implement event channels to push updates to the controller. The controll bus is used by the controller to subscribe,
+ubsubscribe events, request metrics, start and stop syncrhonization.
+
+## Controller
+Controller uses the market APIs to pull trading data, subscribe for events, pull metrics, start and stop syncrhonization.
+It instructs the processor to further process the incoming raw data.
+It also receives instructions from the processors, storage and front-end and pushes them into queue for processing.
+
+## Processors
+Processors are modules that consume incoming raw trade markets data and apply calculations, transformations, aggregations, etc on it.
+They store the products in the storage.
+
+## Storage
+Storage keeps all product data in database.
+
+## Interfaces
+Interfaces are front-end modules that consume product data from the storage and render it to the end user.
+
+=====================
+
+## Market API
+Market API represents functions for fetching trading data.
+
+## Event Bus
+Event bus represents channels for streaming trading data updates.
+
+## Ctrl Bus
+Controll bus represents controll functions for metrics and system instructions between modules.
+
+## Data Bus
+Data bus represents channels for streaming data between components.
