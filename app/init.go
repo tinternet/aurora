@@ -45,42 +45,43 @@ func syncSymbols() {
 		close(results)
 	}()
 
-	var sl = make(map[aurora.MarketID][]aurora.Symbol)
+	var sn = make(aurora.SymbolSnapshot)
 	for r := range results {
-		if r.Error == nil {
-			sl[r.Market] = r.Symbols
-		} else {
+		if r.Error != nil {
 			log.Printf("Could not fetch symbols for market [%s]: %s", r.Market, r.Error)
+			continue
+		}
+		sn[r.Market] = make(map[aurora.SymbolID]aurora.Symbol)
+		for _, s := range r.Symbols {
+			sn[r.Market][s.ID()] = s
 		}
 	}
-	setSymbols(sl)
+	setSymbols(sn)
 
 	log.Printf("Sync completed in %s", shortDuration(time.Since(st)))
 }
 
 func initServices() {
-	var services = make([]service, len(processors))
+	// var services = make([]service, len(processors))
 
-	// Create services
-	for i, p := range processors {
-		var c = context{}
-		var s = service{ctx: &c, proc: p}
-		services[i] = s
-	}
+	// // Create services
+	// for i, p := range processors {
+	// 	var c = context{}
+	// 	var s = service{ctx: &c, proc: p}
+	// 	services[i] = s
+	// }
 
-	// Initialize processors
-	for _, s := range services {
-		if err := s.proc.Init(s.ctx); err != nil {
-			panic(err)
-		}
-		s.ctx.initialized = true
-	}
+	// // Initialize processors
+	// for _, s := range services {
+	// 	if err := s.proc.Init(s.ctx); err != nil {
+	// 		panic(err)
+	// 	}
+	// }
 
-	// Start processors
-	for _, s := range services {
-		if err := s.proc.Start(s.ctx); err != nil {
-			panic(err)
-		}
-		s.ctx.initialized = true
-	}
+	// // Start processors
+	// for _, s := range services {
+	// 	if err := s.proc.Start(s.ctx); err != nil {
+	// 		panic(err)
+	// 	}
+	// }
 }

@@ -8,24 +8,24 @@ import (
 )
 
 var marketSymbols struct {
-	symbols     map[aurora.MarketID][]aurora.Symbol
+	symbols     aurora.SymbolSnapshot
 	symbolsLock sync.RWMutex
 }
 
-func getSymbols() map[aurora.MarketID][]aurora.Symbol {
+func getSymbols() aurora.SymbolSnapshot {
 	marketSymbols.symbolsLock.RLock()
 	defer marketSymbols.symbolsLock.RUnlock()
 	return marketSymbols.symbols
 }
 
-func setSymbols(s map[aurora.MarketID][]aurora.Symbol) {
+func setSymbols(s aurora.SymbolSnapshot) {
 	marketSymbols.symbolsLock.Lock()
 	marketSymbols.symbols = s
 	marketSymbols.symbolsLock.Unlock()
 }
 
 type context struct {
-	initialized bool
+	subs map[aurora.Market][]aurora.Symbol
 }
 
 func (c *context) Market(m string) aurora.MarketID {
@@ -46,29 +46,8 @@ func (c *context) Markets() []aurora.MarketID {
 	return l
 }
 
-func (c *context) Symbols(markets ...aurora.MarketID) []aurora.Symbol {
-	var list = make([]aurora.Symbol, 0)
-	var visited = make(map[string]bool)
-	var symbols = getSymbols()
-
-	if len(markets) == 0 {
-		for m := range symbols {
-			markets = append(markets, m)
-		}
-	}
-
-	for _, m := range markets {
-		for _, s := range symbols[m] {
-			if visited[s.String()] {
-				continue
-			}
-			list = append(list, s)
-			visited[s.String()] = true
-		}
-		list = append(list, symbols[m]...)
-	}
-
-	return list
+func (c *context) Symbols(markets ...aurora.MarketID) aurora.SymbolSnapshot {
+	return getSymbols()
 }
 
 func (c *context) OrderBook() aurora.OrderBookSnapshot {
@@ -80,12 +59,26 @@ func (c *context) Ticker() aurora.TickerSnapshot {
 }
 
 func (c *context) SyncOrderBook(m aurora.MarketID, s ...aurora.Symbol) error {
-	if c.initialized { // foolproof check - subscriptions can be done only during init process
-		return nil
-	}
 	if m == "" {
 		return errors.New("Syncing order book aborted because of empty market id")
 	}
+	if markets[m] == nil {
+		return errors.New("Market with name " + string(m) + "not found")
+	}
+	if c.subs == nil {
+		c.subs = make(map[aurora.Market][]aurora.Symbol)
+	}
+	if c.subs[markets[m]] == nil {
+		c.subs[markets[m]] = make([]aurora.Symbol, 0)
+	}
+	if len(s) == 0 {
+		for _, m := range getSymbols() {
+			for _, sy := range m {
+				s = append(s, sy)
+			}
+		}
+	}
+	c.subs[markets[m]] = append(c.subs[markets[m]], s...)
 	return nil
 }
 

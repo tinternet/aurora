@@ -1,25 +1,56 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
-	"github.com/bloc4ain/aurora/app"
+	"github.com/bloc4ain/aurora/coinsync"
 	"github.com/bloc4ain/aurora/markets"
-	"github.com/bloc4ain/aurora/processing"
 )
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 }
 
+func test(asd ...string) {
+
+}
+
 func main() {
-	app.AddMarket(markets.BinanceMock{})
-	app.AddMarket(markets.KuCoinMock{})
+	binance := markets.BinanceMock{}
+	kucoin := markets.KuCoinMock{}
+	coinsync.AddMarket(binance)
+	coinsync.AddMarket(kucoin)
 
-	app.AddProcessor(&processing.DataKeeper{})
+	// coinsync.SyncSymbols(time.Hour)
 
-	app.Run(app.Config{
-		SymbolSyncInterval: time.Hour * 24,
-	})
+	// ticker := time.NewTicker(time.Second)
+
+	ticker1 := make(chan struct{})
+	stopped := false
+	go func() {
+		for !stopped {
+			time.Sleep(time.Second)
+			ticker1 <- struct{}{}
+		}
+		close(ticker1)
+	}()
+
+	go func() {
+		time.Sleep(time.Second * 4)
+		stopped = true
+	}()
+
+	for range ticker1 {
+		fmt.Println("sync...")
+	}
+
+	fmt.Println("sync stop...")
+
+	// app.AddProcessor(&processing.DataKeeper{})
+
+	// app.Run(app.Config{
+	// 	SymbolSyncInterval: time.Hour * 24,
+	// })
 }

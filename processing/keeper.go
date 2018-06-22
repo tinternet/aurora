@@ -14,17 +14,9 @@ type DataKeeper struct {
 // Init method is called before markets are synched and events are subscribed
 // Returning error causes panic
 func (dk *DataKeeper) Init(c aurora.Context) error {
-	if err := dk.Connect("localhost:28015"); err != nil {
+	if err := c.SyncOrderBook(c.Market("Binance")); err != nil {
 		return err
 	}
-
-	for _, m := range c.Markets() {
-		if err := c.SyncOrderBook(m, c.Symbols()...); err != nil {
-			return err
-		}
-	}
-
-	dk.context = c
 	return nil
 }
 
