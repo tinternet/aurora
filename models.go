@@ -9,16 +9,13 @@ type SymbolID string
 
 // Symbol holds symbol assets.
 type Symbol struct {
+	ID         SymbolID
 	BaseAsset  string
 	QuoteAsset string
 }
 
 func (s Symbol) String() string {
-	return fmt.Sprintf("Symbol[Base:%s;Quote:%s]", s.BaseAsset, s.QuoteAsset)
-}
-
-func (s Symbol) ID() SymbolID {
-	return SymbolID(s.BaseAsset + s.QuoteAsset)
+	return string(s.ID)
 }
 
 // Ticker represents 24 hour stats for symbol.

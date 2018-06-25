@@ -15,7 +15,7 @@ func (m Market) ID() aurora.MarketID {
 }
 
 // Symbols returns currently traded symbols on the market
-func (m Market) Symbols() ([]aurora.Symbol, error) {
+func (m Market) Symbol() ([]aurora.Symbol, error) {
 	var info, err = binance.GetExchangeInfo()
 
 	if err != nil {

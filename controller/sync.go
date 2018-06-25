@@ -1,24 +1,24 @@
 package controller
 
-import (
-	"github.com/bloc4ain/aurora"
-)
+import "github.com/bloc4ain/aurora"
 
-type synchronizator struct {
+type sync struct {
+	symbols []aurora.SymbolID
 }
 
-func SyncSymbols() {
-
-}
-
-func SyncOrderBook(s ...aurora.Symbol) {
+func (s sync) SyncTicker(symbol aurora.Symbol) {
 
 }
 
-func SyncTicker(s ...aurora.Symbol) {
+func (s sync) SyncBook(symbol aurora.Symbol) {
 
 }
 
-func SyncTrades(s ...aurora.Symbol) {
+var syncBook chan aurora.SymbolID
+var syncTicker chan aurora.SymbolID
 
+func syncBooks() {
+	for symbol := range syncBook {
+
+	}
 }

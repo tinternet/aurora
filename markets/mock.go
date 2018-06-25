@@ -3,6 +3,7 @@ package markets
 import (
 	"encoding/json"
 	"io/ioutil"
+	"time"
 
 	"github.com/bloc4ain/aurora"
 )
@@ -33,16 +34,32 @@ func init() {
 type BinanceMock struct {
 }
 
+type symbolReader struct {
+	json   []byte
+	ticker *time.Ticker
+}
+
+func (r symbolReader) Read(list *[]aurora.Symbol) error {
+	<-r.ticker.C
+	return json.Unmarshal(binanceSymbolsJSON, list)
+}
+
+func (r symbolReader) Close() error {
+	r.ticker.Stop()
+	return nil
+}
+
 // ID returns market's official name
 func (m BinanceMock) ID() aurora.MarketID {
 	return "Binance"
 }
 
-// Symbols returns currently traded symbols on the market
-func (m BinanceMock) Symbols() ([]aurora.Symbol, error) {
-	var list []aurora.Symbol
-	var err = json.Unmarshal(binanceSymbolsJSON, &list)
-	return list, err
+// SymbolReader returns currently traded symbols on the market
+func (m BinanceMock) SymbolReader() aurora.SymbolReader {
+	return symbolReader{
+		ticker: time.NewTicker(time.Second * 1),
+		json:   binanceSymbolsJSON,
+	}
 }
 
 // KuCoinMock implements mocked KuCoin API
@@ -54,9 +71,10 @@ func (m KuCoinMock) ID() aurora.MarketID {
 	return "KuCoin"
 }
 
-// Symbols returns currently traded symbols on the market
-func (m KuCoinMock) Symbols() ([]aurora.Symbol, error) {
-	var list []aurora.Symbol
-	var err = json.Unmarshal(kucoinSymbolsJSON, &list)
-	return list, err
+// SymbolReader returns currently traded symbols on the market
+func (m KuCoinMock) SymbolReader() aurora.SymbolReader {
+	return symbolReader{
+		ticker: time.NewTicker(time.Second * 1),
+		json:   kucoinSymbolsJSON,
+	}
 }
