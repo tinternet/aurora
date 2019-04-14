@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "cloudcode",
+      "request": "attach",
+      "name": "Debug on Kubernetes (frontend)",
+      "language": "Go",
+      "debugPort": 3000,
+      "localRoot": "${workspaceFolder}/src/frontend",
+      "remoteRoot": "/src/frontend",
+      "podSelector": {
+        "app": "aurora",
+        "tier": "frontend"
+      }
+    },
+    {
+      "type": "cloudcode",
+      "request": "attach",
+      "name": "Debug on Kubernetes (backend)",
+      "language": "Go",
+      "debugPort": 3000,
+      "localRoot": "${workspaceFolder}/src/backend",
+      "remoteRoot": "/src/backend",
+      "podSelector": {
+        "app": "aurora",
+        "tier": "backend"
+      }
+    }
+  ]
+}

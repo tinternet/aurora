@@ -1,0 +1,23 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: aurora-rabbitmq
+  labels:
+    app: aurora
+    tier: mq
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aurora
+        tier: mq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management
+          ports:
+            - name: http-server
+              containerPort: 15672
+            - name: client-server
+              containerPort: 5672

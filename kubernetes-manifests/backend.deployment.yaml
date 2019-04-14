@@ -1,0 +1,30 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: aurora-backend
+  labels:
+    app: aurora
+    tier: backend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aurora
+        tier: backend
+    spec:
+      containers:
+        - name: backend
+          image: aurora-backend
+          ports:
+            - name: http-server
+              containerPort: 8080
+            - name: debug
+              containerPort: 3000
+          env:
+            - name: PORT
+              value: "8080"
+            - name: GUESTBOOK_DB_ADDR
+              value: aurora-mongodb:27017
+            - name: RABBITMQ_ADDR
+              value: aurora-rabbitmq:5672

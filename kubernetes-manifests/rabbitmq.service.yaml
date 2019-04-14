@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-rabbitmq-admin
+  labels:
+    app: aurora
+    tier: mq
+spec:
+  type: LoadBalancer
+  selector:
+    app: aurora
+    tier: mq
+  ports:
+    - port: 8009
+      targetPort: http-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-rabbitmq
+  labels:
+    app: aurora
+    tier: mq
+spec:
+  ports:
+    - port: 5672
+      targetPort: client-server
+  selector:
+    app: aurora
+    tier: mq

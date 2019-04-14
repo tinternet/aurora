@@ -1,0 +1,20 @@
+apiVersion: skaffold/v1beta6
+kind: Config
+build:
+  artifacts:
+    - image: aurora-backend
+      context: src/backend
+    - image: aurora-frontend
+      context: src/frontend
+    - image: aurora-markets
+      context: src/markets
+  tagPolicy:
+    sha256: {}
+deploy:
+  kubectl:
+    manifests:
+      - kubernetes-manifests/**
+profiles:
+  - name: cloudbuild
+    build:
+      googleCloudBuild: {}
